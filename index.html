@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SweetBiscuit44 Calculator</title>
+  <style>
+    :root {
+      --biscuit: #f9d8a6;
+      --biscuit-dark: #e8c28d;
+      --choco-chip: #5d4037;
+      --warm-cream: #fdf5e6;
+      --error: #e74c3c;
+      --sound-on: #3498db;
+      --sound-off: #95a5a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--warm-cream);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .calculator {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 360px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .display {
+      background: var(--biscuit);
+      color: var(--choco-chip);
+      padding: 24px 20px;
+      text-align: right;
+      font-size: 2rem;
+      font-weight: 500;
+      min-height: 80px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 20px;
+    }
+
+    button {
+      border: none;
+      padding: 16px 8px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      background: var(--biscuit);
+      color: var(--choco-chip);
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: var(--biscuit-dark);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    .operator { background: #d7b89a; }
+    .equals { background: #b8866b; color: white; }
+    .clear  { background: var(--error); color: white; }
+
+    /* ---------- NEW FOOTER STYLE ---------- */
+    .footer {
+      background: var(--biscuit);
+      padding: 12px;
+      font-size: 0.85rem;
+      color: var(--choco-chip);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .footer a {
+      color: var(--choco-chip);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .footer .donate-btn {
+      background: var(--choco-chip);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .footer .donate-btn:hover {
+      background: #3e2e28;
+    }
+
+    #sound-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--sound-off);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    #sound-toggle.active {
+      color: var(--sound-on);
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+
+    <div class="buttons" id="button-grid">
+      <button class="clear">C</button>
+      <button class="operator">⌫</button>
+      <button class="operator">÷</button>
+      <button class="operator">×</button>
+
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button class="operator">−</button>
+
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button class="operator">+</button>
+
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button class="equals">=</button>
+
+      <button style="grid-column: span 2;">0</button>
+      <button>.</button>
+      <button class="operator">%</button>
+    </div>
+
+    <!-- ---------- NEW FOOTER WITH DONATION + EMAIL ---------- -->
+    <div class="footer">
+      <a
+        class="donate-btn"
+        href="https://paypal.me/sweetbiscuit44"
+        target="_blank"
+      >💛 Donate on PayPal</a>
+
+      <a href="mailto:sweetbiscuit44@gmail.com">
+        📧 sweetbiscuit44@gmail.com
+      </a>
+
+      <button id="sound-toggle">🎵</button>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById('display');
+    let currentInput = '0';
+    let soundEnabled = true;
+    let audioCtx = null;
+    let isAudioUnlocked = false;
+
+    function initAudio() {
+      if (isAudioUnlocked || !soundEnabled) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        isAudioUnlocked = true;
+      } catch (e) {}
+    }
+
+    function playTick() {
+      if (!soundEnabled || !isAudioUnlocked || !audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 800;
+      gain.gain.value = 0.05;
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+      osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    function ensureAudioAndPlay() {
+      initAudio();
+      playTick();
+    }
+
+    function updateDisplay() {
+      display.textContent =
+        currentInput.length > 15
+          ? currentInput.substring(0, 15) + '…'
+          : currentInput;
+    }
+
+    function appendToDisplay(value) {
+      ensureAudioAndPlay();
+      if (value === '⌫') {
+        currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : '0';
+      } else if (currentInput === '0' && value !== '.') {
+        currentInput = value;
+      } else {
+        const last = currentInput.slice(-1);
+        const ops = ['+', '-', '*', '/', '%'];
+        if (ops.includes(value) && ops.includes(last)) {
+          currentInput = currentInput.slice(0, -1) + value;
+        } else {
+          currentInput += value;
+        }
+      }
+      updateDisplay();
+    }
+
+    function clearDisplay() {
+      ensureAudioAndPlay();
+      currentInput = '0';
+      updateDisplay();
+    }
+
+    function calculate() {
+      ensureAudioAndPlay();
+      try {
+        let expr = currentInput
+          .replace(/×/g, '*')
+          .replace(/÷/g, '/')
+          .replace(/−/g, '-');
+        let result = Function('"use strict"; return (' + expr + ')')();
+        currentInput = String(result);
+        updateDisplay();
+      } catch {
+        currentInput = 'Error';
+        updateDisplay();
+        setTimeout(clearDisplay, 1500);
+      }
+    }
+
+    document.getElementById('button-grid').addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') return;
+      const text = e.target.textContent;
+      if (text === 'C') clearDisplay();
+      else if (text === '⌫') appendToDisplay('⌫');
+      else if (text === '=') calculate();
+      else if (text === '÷') appendToDisplay('/');
+      else if (text === '×') appendToDisplay('*');
+      else if (text === '−') appendToDisplay('-');
+      else if (text === '%') appendToDisplay('%');
+      else appendToDisplay(text);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') calculate();
+      else if (e.key === 'Escape') clearDisplay();
+      else if (e.key === 'Backspace') { e.preventDefault(); appendToDisplay('⌫'); }
+      else if (/^[0-9]$/.test(e.key)) appendToDisplay(e.key);
+      else if (e.key === '.') appendToDisplay('.');
+      else if (['+', '-', '*', '/', '%'].includes(e.key))
+        appendToDisplay(e.key);
+    });
+
+    const soundToggle = document.getElementById('sound-toggle');
+
+    function loadSoundPref() {
+      const saved = localStorage.getItem('calculatorSound');
+      soundEnabled = saved !== 'false';
+      soundToggle.classList.toggle('active', soundEnabled);
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      localStorage.setItem('calculatorSound', soundEnabled);
+      soundToggle.classList.toggle('active', soundEnabled);
+    }
+
+    soundToggle.addEventListener('click', toggleSound);
+
+    loadSoundPref();
+    updateDisplay();
+  </script>
+</body>
+</html>
