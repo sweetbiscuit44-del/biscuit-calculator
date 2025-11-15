@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>SweetBiscuit44 Calculator — Fixed Layout</title>
+<title>SweetBiscuit44 Calculator — Crumb Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --biscuit: #f9d8a6;
@@ -15,7 +16,8 @@
     --sound-off: #95a5a6;
     --bg: #ffffff;
     --muted: #7a6a5f;
-    --glass: rgba(255,255,255,0.6);
+    --glass: rgba(255,253,245,0.75);
+    --shadow: rgba(93, 64, 55, 0.12);
   }
 
   [data-theme="dark"] {
@@ -25,84 +27,190 @@
     --warm-cream: #1b1a1a;
     --bg: #0f0f10;
     --muted: #bdb3a7;
-    --glass: rgba(0,0,0,0.4);
+    --glass: rgba(15,15,16,0.65);
+    --shadow: rgba(0,0,0,0.3);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body,html { width:100%; height:100%; overflow-x:hidden; font-family: system-ui, sans-serif; }
+  body, html {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Quicksand', system-ui, sans-serif;
+    color: var(--choco-chip);
+  }
 
   body {
-    background: linear-gradient(180deg,var(--warm-cream),var(--bg));
+    background:
+      radial-gradient(circle at 10% 20%, rgba(249, 216, 166, 0.1) 0%, transparent 20%),
+      radial-gradient(circle at 90% 80%, rgba(232, 194, 141, 0.1) 0%, transparent 25%),
+      var(--warm-cream);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    position: relative;
   }
 
-  /* FIX: prevent squashing by limiting width */
+  /* subtle crumb texture */
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='5' cy='5' r='1.5' fill='%23e8c28d' opacity='0.15'/%3E%3Ccircle cx='40' cy='30' r='1' fill='%23d7b89a' opacity='0.1'/%3E%3Ccircle cx='20' cy='50' r='0.8' fill='%23c8a88a' opacity='0.1'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .calculator {
     width: 100%;
     max-width: 460px;
     min-width: 300px;
     margin: auto;
-    border-radius: 22px;
+    border-radius: 24px;
     background: var(--glass);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    box-shadow:
+      0 8px 24px var(--shadow),
+      inset 0 1px 0 rgba(255,255,255,0.4);
     overflow: hidden;
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(232, 194, 141, 0.3);
   }
 
   .display {
-    background: linear-gradient(90deg, var(--biscuit), var(--biscuit-dark));
-    padding: 22px;
-    text-align:right;
-    font-size:2rem;
-    min-height:84px;
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
+    background: linear-gradient(135deg, var(--biscuit), var(--biscuit-dark));
+    padding: 24px 22px;
+    text-align: right;
+    font-size: 2.1rem;
+    font-family: 'Nunito', monospace;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: var(--choco-chip);
+    text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+    box-shadow: inset 0 -2px 6px rgba(0,0,0,0.06);
+    letter-spacing: -0.5px;
   }
 
   .buttons {
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    padding:18px;
-    gap:12px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 18px;
+    gap: 12px;
   }
 
   button {
-    padding:16px;
-    font-size:1.2rem;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
+    padding: 16px 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
     background: var(--biscuit);
-    color:var(--choco-chip);
-    transition:.15s;
+    color: var(--choco-chip);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    font-family: 'Quicksand', sans-serif;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
   }
 
-  button:hover { transform:translateY(-3px); }
-  button:active { transform:translateY(1px) scale(.97); }
+  button::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.4), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
 
-  .operator { background:#d7b89a; }
-  .equals { background:#b8866b; color:white; }
-  .clear { background:var(--error); color:white; }
-  .reset { grid-column:span 4; background:#8e44ad; color:white; }
+  button:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    background: var(--biscuit-dark);
+  }
 
-  .util-row { display:flex; gap:8px; padding:12px 18px; }
+  button:hover::after {
+    opacity: 1;
+  }
+
+  button:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .operator { background: #d7b89a; }
+  .equals { 
+    background: linear-gradient(135deg, #b9866b, #9f6a4f); 
+    color: white;
+    font-weight: 700;
+  }
+  .clear { 
+    background: linear-gradient(135deg, #e74c3c, #c0392b); 
+    color: white;
+  }
+  .reset { 
+    grid-column: span 4;
+    background: linear-gradient(135deg, #8e44ad, #6c3483); 
+    color: white;
+    border-radius: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .util-row {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .util-row button {
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--warm-cream);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+  }
 
   .footer {
-    padding:16px;
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:10px;
+    padding: 18px 20px 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.95rem;
+    font-family: 'Nunito', sans-serif;
+    color: var(--muted);
+    background: rgba(253, 245, 230, 0.3);
+    border-top: 1px solid rgba(232, 194, 141, 0.3);
   }
 
-  @media (max-width:430px){
-    .calculator{ max-width:95vw; }
-    button { font-size:1.05rem; padding:14px; }
-    .display { font-size:1.7rem; padding:16px; }
+  .footer a {
+    text-decoration: none;
+    color: var(--choco-chip);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+  }
+
+  .footer a:hover {
+    color: var(--biscuit-dark);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 430px) {
+    .calculator { max-width: 95vw; }
+    button { font-size: 1.1rem; padding: 14px 0; }
+    .display { font-size: 1.8rem; padding: 20px; }
+    .util-row button { font-size: 0.9rem; padding: 8px 12px; }
   }
 </style>
 </head>
@@ -112,9 +220,9 @@
   <div class="display" id="display">0</div>
 
   <div class="util-row">
-    <button id="copy">Copy</button>
-    <button id="paste">Paste</button>
-    <button id="clear-storage">Clear Storage</button>
+    <button id="copy">📋 Copy</button>
+    <button id="paste">📝 Paste</button>
+    <button id="clear-storage">🧹 Clear Storage</button>
   </div>
 
   <div class="buttons" id="button-grid">
@@ -138,17 +246,17 @@
     <button>3</button>
     <button class="equals">=</button>
 
-    <button style="grid-column:span 2;">0</button>
+    <button style="grid-column: span 2;">0</button>
     <button>.</button>
     <button class="operator">%</button>
 
-    <button class="reset">Reset Calculator</button>
+    <button class="reset">✨ Reset Calculator</button>
   </div>
 
   <div class="footer">
-    <a href="https://paypal.me/sweetbiscuit44" target="_blank">Donate</a>
-    <a href="mailto:sweetbiscuit44@gmail.com">Email</a>
-    <a href="https://sweetbiscuit44-del.github.io/sweet-biscuit44-home-page/" target="_blank">SweetBiscuit Main</a>
+    <a href="https://paypal.me/sweetbiscuit44" target="_blank">💖 Donate</a>
+    <a href="mailto:sweetbiscuit44@gmail.com">✉️ Email</a>
+    <a href="https://sweetbiscuit44-del.github.io/sweet-biscuit44-home-page/" target="_blank">🏡 SweetBiscuit Home</a>
   </div>
 </div>
 
@@ -156,34 +264,76 @@
 let currentInput = localStorage.getItem('sb_input') || '0';
 const display = document.getElementById('display');
 
-function update(){ display.textContent = currentInput; localStorage.setItem('sb_input', currentInput); }
+function update() {
+  display.textContent = currentInput.length > 12 ? currentInput.slice(0,12) + '…' : currentInput;
+  localStorage.setItem('sb_input', currentInput);
+}
+
 update();
 
-function append(v){
-  if(v==='⌫') currentInput = currentInput.length>1 ? currentInput.slice(0,-1) : '0';
-  else if(currentInput==='0' && v!=='.') currentInput=v;
-  else currentInput+=v;
+function append(v) {
+  if (v === '⌫') {
+    currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : '0';
+  } else if (currentInput === '0' && v !== '.') {
+    currentInput = v;
+  } else {
+    // Prevent malformed input
+    if (/[0-9+\-*/.]/.test(v) || v === '÷' || v === '×' || v === '−') {
+      currentInput += v;
+    }
+  }
   update();
 }
 
-function calc(){ try{ currentInput = String(Function('return '+currentInput.replace('×','*').replace('÷','/').replace('−','-'))()); } catch{ currentInput='Error'; setTimeout(()=>{currentInput='0';update();},1200); }
-update(); }
+function calc() {
+  try {
+    let expr = currentInput
+      .replace(/×/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/−/g, '-');
+    // Safety: only allow safe tokens
+    if (/^[0-9+\-*/(). ]+$/.test(expr)) {
+      currentInput = String(Function('"use strict"; return (' + expr + ')')());
+      if (currentInput === 'Infinity' || currentInput === '-Infinity') currentInput = '∞';
+    } else {
+      throw new Error('Unsafe input');
+    }
+  } catch (e) {
+    currentInput = 'Error';
+    setTimeout(() => { currentInput = '0'; update(); }, 1200);
+  }
+  update();
+}
 
-function clearAll(){ currentInput='0'; update(); }
-function resetCalc(){ localStorage.removeItem('sb_input'); currentInput='0'; update(); }
+function clearAll() { currentInput = '0'; update(); }
+function resetCalc() { localStorage.removeItem('sb_input'); currentInput = '0'; update(); }
 
-document.getElementById('button-grid').addEventListener('click',e=>{
-  if(e.target.tagName!=='BUTTON')return;
-  const t=e.target.textContent;
-  if(t==='C') clearAll();
-  else if(t==='Reset Calculator') resetCalc();
-  else if(t==='=') calc();
-  else if(t==='⌫') append('⌫');
-  else if(t==='÷') append('/');
-  else if(t==='×') append('*');
-  else if(t==='−') append('-');
+document.getElementById('button-grid').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  const t = e.target.textContent.trim();
+  if (t === 'C') clearAll();
+  else if (t === 'Reset Calculator' || t === '✨ Reset Calculator') resetCalc();
+  else if (t === '=') calc();
+  else if (t === '⌫') append('⌫');
+  else if (t === '÷') append('÷');
+  else if (t === '×') append('×');
+  else if (t === '−') append('−');
   else append(t);
 });
+
+// Optional: Copy/Paste buttons (basic)
+document.getElementById('copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(currentInput).catch(() => {});
+});
+document.getElementById('paste').addEventListener('click', () => {
+  navigator.clipboard.readText().then(text => {
+    if (!isNaN(text) || /[+\-*/÷×.]/.test(text)) {
+      currentInput = text.trim() || '0';
+      update();
+    }
+  }).catch(() => {});
+});
+document.getElementById('clear-storage').addEventListener('click', resetCalc);
 </script>
 
 </body>
