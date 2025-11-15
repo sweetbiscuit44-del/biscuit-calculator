@@ -17,7 +17,6 @@
       --muted: #7a6a5f;
       --glass: rgba(255,255,255,0.6);
     }
-
     [data-theme="dark"] {
       --biscuit: #3e2e28;
       --biscuit-dark: #35221a;
@@ -27,7 +26,6 @@
       --muted: #bdb3a7;
       --glass: rgba(0,0,0,0.4);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial; }
     html,body { height:100%; }
     body {
@@ -39,8 +37,6 @@
       padding: 20px;
       transition: background .3s ease;
     }
-
-    /* Splash */
     .splash {
       position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--bg); z-index:9999; transition:opacity .45s ease, visibility .45s ease; 
     }
@@ -48,9 +44,7 @@
     .splash .logo-wrap { text-align:center; }
     .splash svg { width:120px; height:120px; transform:scale(0.9); animation:pop .8s ease; }
     .splash p { margin-top:12px; color:var(--muted); font-weight:600; }
-
     @keyframes pop { 0% { transform: scale(.7) rotate(-6deg); opacity:0 } 60% { transform: scale(1.03); opacity:1 } 100% { transform: scale(1); } }
-
     .calculator {
       background: linear-gradient(180deg, var(--glass), rgba(255,255,255,0.02));
       backdrop-filter: blur(6px);
@@ -65,7 +59,6 @@
       animation: fadeInUp .5s ease both;
     }
     @keyframes fadeInUp { from { opacity:0; transform: translateY(18px);} to { opacity:1; transform: translateY(0);} }
-
     .header {
       display:flex; align-items:center; gap:12px; padding:14px 18px; background:transparent;
     }
@@ -74,7 +67,6 @@
     .cookie svg { width:34px; height:34px; }
     .brand h1 { font-size:1rem; margin:0; line-height:1; }
     .brand p { font-size:0.72rem; color:var(--muted); margin:0; }
-
     .display {
       background: linear-gradient(90deg, var(--biscuit), var(--biscuit-dark));
       color: var(--choco-chip);
@@ -87,20 +79,17 @@
       white-space: pre-wrap;
       display:flex; align-items:center; justify-content:flex-end; gap:8px;
     }
-
     .subrow { display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--muted); }
-
     .buttons {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
       padding: 18px;
     }
-
     button {
       border: none;
-      padding: 14px 8px;
-      font-size: 1.15rem;
+      padding: 16px 10px;
+      font-size: 1.17rem;
       border-radius: 12px;
       cursor: pointer;
       background: var(--biscuit);
@@ -111,21 +100,17 @@
     }
     button:active { transform: translateY(2px) scale(.99); }
     button:hover { transform: translateY(-4px); box-shadow: 0 12px 18px rgba(0,0,0,0.08); }
-
     .operator { background: linear-gradient(180deg,#d7b89a,#c69c80); }
     .equals { background: linear-gradient(180deg,#b8866b,#a86b4f); color: white; box-shadow: 0 10px 18px rgba(168,107,79,0.28); }
     .clear  { background: linear-gradient(180deg,var(--error),#c0392b); color: white; }
     .reset  { background: linear-gradient(180deg,#8e44ad,#6f2e96); color:white; grid-column: span 4; }
-
-    /* history / utilities row */
     .util-row { display:flex; gap:8px; padding: 0 18px 12px; align-items:center; }
-    .util-row button, .util-row .small { padding:8px 10px; font-size:0.9rem; border-radius:10px; }
+    .util-row button, .util-row .small { padding:8px 10px; font-size:0.97rem; border-radius:10px; }
     .small { background:transparent; border:1px solid rgba(0,0,0,0.04); color:var(--muted); }
-
     .footer {
       background: transparent;
       padding: 12px 18px 18px;
-      font-size: 0.9rem;
+      font-size: 0.99rem;
       color: var(--choco-chip);
       display: flex;
       flex-direction: row;
@@ -133,22 +118,29 @@
       align-items: center;
       justify-content: space-between;
     }
-    .footer .left { display:flex; gap:10px; align-items:center; }
+    .footer .left { display:flex; gap:10px; align-items:center; flex-wrap: wrap; }
     .footer a { color: var(--choco-chip); font-weight:700; text-decoration:none; }
-    .donate-btn { background: var(--choco-chip); color: white; padding: 8px 14px; border-radius: 10px; font-size: 0.9rem; text-decoration: none; }
-
+    .donate-btn { background: var(--choco-chip); color: white; padding: 8px 14px; border-radius: 10px; font-size: 0.97rem; text-decoration: none; }
     .history-panel { max-height:160px; overflow:auto; padding:8px 18px 18px; display:none; gap:8px; flex-direction:column; }
     .history-panel.show { display:flex; }
     .history-item { padding:8px 10px; border-radius:8px; background:rgba(0,0,0,0.03); color:var(--muted); font-weight:600; display:flex; justify-content:space-between; }
-
     /* responsive tweaks */
-    @media (max-width:420px) {
-      .calculator { max-width:360px; }
-      .display { font-size:1.6rem; padding:16px; }
-      button { padding:14px; font-size:1.05rem; }
-      .cookie { width:46px; height:46px; }
+    @media (max-width: 500px) {
+      .calculator { max-width:98vw; }
+      .display { font-size:1.32rem; padding:14px; min-height:64px;}
+      button { padding:12px 2px; font-size:1.01rem; }
+      .cookie { width:38px; height:38px; }
+      .header { padding:10px 6vw 8px 3vw; }
+      .buttons { padding: 12px 4px; gap: 7px; }
+      .footer { padding:10px 4vw 14px 3vw; font-size: .94em; flex-direction: column; gap: 6px; }
+      .util-row{padding:0 3vw 10px 3vw;}
     }
-
+    @media (max-width:346px){
+      .display {font-size:1.07rem; padding:8px; min-height:44px;}
+      button {font-size:0.97rem;}
+      .footer {font-size: .89em;}
+      .brand h1 {font-size:0.79rem;}
+    }
   </style>
 </head>
 <body data-theme="light">
@@ -340,3 +332,4 @@
   </script>
 </body>
 </html>
+
