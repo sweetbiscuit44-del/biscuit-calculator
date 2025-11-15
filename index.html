@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-  <title>SweetBiscuit44 Calculator — Glazed Edition</title>
+  <title>SweetBiscuit44 Calculator — Twinkle Edition</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
@@ -60,7 +60,6 @@
       align-items: center;
       padding: 20px;
     }
-    /* Simple, subtle texture background for better contrast in dark mode */
     body {
       background-image: 
         radial-gradient(circle at 10% 20%, rgba(249, 216, 166, 0.1) 0%, transparent 20%),
@@ -71,10 +70,12 @@
     /* 3. Calculator Structure (Glassmorphism) */
     .calculator {
       width: 100%;
-      max-width: 420px; /* Slightly narrower, modern feel */
+      max-width: 500px; /* Increased max-width for better desktop look */
+      min-width: 320px;
+      margin: auto;
       border-radius: var(--border-radius-main);
       background: var(--glass-light);
-      backdrop-filter: blur(20px) saturate(150%); /* Increased blur */
+      backdrop-filter: blur(20px) saturate(150%);
       -webkit-backdrop-filter: blur(20px) saturate(150%);
       box-shadow: var(--shadow-primary);
       overflow: hidden;
@@ -82,6 +83,7 @@
       border: 1px solid rgba(232, 194, 141, 0.3);
       display: flex;
       flex-direction: column;
+      transition: box-shadow 0.3s;
     }
 
     /* 4. Display Area */
@@ -101,7 +103,7 @@
       margin-bottom: 5px;
     }
     .display {
-      font-size: 2.8rem; /* Larger font */
+      font-size: clamp(2rem, 5vw, 2.8rem); /* Fluid font size */
       font-family: var(--font-display);
       min-height: 50px;
       color: var(--color-accent);
@@ -141,7 +143,6 @@
       transition: all 0.15s ease-out;
       box-shadow: var(--shadow-button);
       font-family: var(--font-body);
-      /* Glazed effect on hover/active */
       position: relative;
       overflow: hidden;
     }
@@ -201,13 +202,12 @@
       font-weight: 700; 
       letter-spacing: 1px;
     }
-    /* Span 2 for zero */
     .zero {
         grid-column: span 2;
     }
 
-    /* Sound Toggle */
-    #sound-toggle.active {
+    /* Sound Toggle Active State (for all utility buttons) */
+    #sound-toggle.active, #twinkle-toggle.active {
       background: #3498db; /* Sound On Blue */
       color: #fff;
     }
@@ -244,6 +244,20 @@
     }
 
     /* 7. Media Queries */
+    @media (min-width: 601px) {
+      .util-row {
+          padding: 18px;
+          gap: 12px;
+          justify-content: space-between;
+          flex-wrap: nowrap;
+      }
+      .util-row button {
+          flex-grow: 1;
+      }
+      .calculator {
+          box-shadow: 0 15px 40px rgba(93, 64, 55, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+    }
     @media (max-width: 480px) {
       .calculator { max-width: 95vw; border-radius: 20px;}
       .display { font-size: 2rem; }
@@ -268,7 +282,7 @@
   <div class="util-row">
     <button id="copy"><i class="fas fa-clipboard"></i> Copy</button>
     <button id="paste"><i class="fas fa-paste"></i> Paste</button>
-    <button id="clear-storage"><i class="fas fa-broom"></i> Clear Data</button>
+    <button id="twinkle-toggle"><i class="fas fa-star"></i> Twinkle</button> 
     <button id="sound-toggle"><i class="fas fa-bell"></i> Sound</button>
   </div>
 
@@ -311,21 +325,25 @@
 </div>
 
 <audio id="ping" src="https://cdn.pixabay.com/audio/2022/08/20/audio_124b65cce3.mp3" preload="auto"></audio>
+<audio id="twinkle" src="https://cdn.pixabay.com/audio/2022/03/10/audio_e6e30b6214.mp3" preload="auto"></audio>
 
 <script>
 // --- Calculator State ---
 let currentInput = localStorage.getItem('sb_input') || '0';
 let historyLog = localStorage.getItem('sb_history') || '';
 let soundOn = localStorage.getItem('sb_sound') !== 'off';
+let twinkleOn = localStorage.getItem('sb_twinkle') !== 'off'; 
 let theme = localStorage.getItem('sb_theme') || 'light';
 
 // --- DOM Elements ---
 const display = document.getElementById('display');
 const historyDisplay = document.getElementById('history');
 const soundBtn = document.getElementById('sound-toggle');
+const twinkleBtn = document.getElementById('twinkle-toggle');
 const themeToggle = document.getElementById('theme-toggle');
 const buttonGrid = document.getElementById('button-grid');
 const ping = document.getElementById('ping');
+const twinkle = document.getElementById('twinkle'); 
 
 // --- Initialization and Utility Functions ---
 
@@ -333,13 +351,20 @@ const ping = document.getElementById('ping');
 function playPing() {
   if (soundOn && ping) {
     ping.currentTime = 0;
-    ping.play().catch(() => {}); // Avoids promise rejection error if user hasn't interacted yet
+    ping.play().catch(() => {});
+  }
+}
+
+/** Plays the twinkle sound if enabled. */
+function playTwinkle() {
+  if (twinkleOn && twinkle) {
+    twinkle.currentTime = 0;
+    twinkle.play().catch(() => {});
   }
 }
 
 /** Updates the display and saves state to Local Storage. */
 function update() {
-  // Use a display-friendly version of currentInput for the main display
   const displayValue = currentInput.length > 18 
     ? currentInput.slice(0, 18) + '…' 
     : currentInput;
@@ -348,6 +373,7 @@ function update() {
   
   localStorage.setItem('sb_input', currentInput);
   localStorage.setItem('sb_history', historyLog);
+  localStorage.setItem('sb_twinkle', twinkleOn ? 'on' : 'off'); 
 }
 
 /** Toggles dark/light mode. */
@@ -362,10 +388,11 @@ function toggleTheme() {
 // Initial setup
 document.body.dataset.theme = theme;
 soundBtn.classList.toggle('active', soundOn);
-toggleTheme(); // Call once to set initial icon
-toggleTheme(); // Call again to set initial theme, this is a trick to run the logic without duplicating
-
-update(); // Load initial state
+twinkleBtn.classList.toggle('active', twinkleOn); 
+// Trick to set initial icon while honoring saved theme
+toggleTheme(); 
+toggleTheme(); 
+update(); 
 
 // --- Core Calculator Logic ---
 
@@ -373,7 +400,6 @@ update(); // Load initial state
 function append(v) {
   playPing();
   
-  // Basic validation: prevent multiple operators or decimals at the end
   const lastChar = currentInput.slice(-1);
   const isOperator = (char) => ['÷', '×', '−', '+', '%'].includes(char);
   
@@ -392,30 +418,26 @@ function append(v) {
 
 /** Executes the calculation. */
 function calc() {
-  playPing();
+  playTwinkle(); // Play twinkle sound on result!
+  
   try {
-    // 1. Prepare expression for 'eval' (safely via Function constructor)
     let expr = currentInput
       .replace(/×/g, '*')
       .replace(/÷/g, '/')
       .replace(/−/g, '-')
-      .replace(/%/g, '/100*'); // Handle percentage: 10% -> 10/100*
+      .replace(/%/g, '/100*');
       
-    // 2. Simple, strict input check (improved security slightly)
     if (!/^[0-9+\-*/%.() ]+$/.test(expr)) {
       throw new Error('Unsafe or invalid input sequence.');
     }
     
-    // 3. Perform calculation
     const result = Function('"use strict"; return (' + expr + ')')();
     
-    // 4. Handle results
     if (!isFinite(result)) {
       currentInput = 'Error: Math';
       historyLog = currentInput;
     } else {
       historyLog = currentInput + ' =';
-      // Limit to 10 decimal places for better display/precision
       currentInput = String(Math.round(result * 10000000000) / 10000000000); 
     }
     
@@ -424,7 +446,6 @@ function calc() {
   }
   
   update();
-  // Clear error after a short delay
   if (currentInput.includes('Error')) {
     setTimeout(() => {
       currentInput = '0'; 
@@ -448,8 +469,11 @@ function resetCalc() {
   localStorage.clear();
   currentInput = '0';
   historyLog = '';
-  soundOn = true; // Reset sound to default
+  soundOn = true;
+  twinkleOn = true; 
+  theme = 'light';
   soundBtn.classList.add('active');
+  twinkleBtn.classList.add('active');
   document.body.dataset.theme = 'light';
   update();
   alert("Calculator reset complete! All stored data cleared.");
@@ -468,13 +492,23 @@ buttonGrid.addEventListener('click', e => {
   else append(value);
 });
 
-// Sound Toggle
+// Sound Toggle (Ping)
 if (soundBtn) {
   soundBtn.addEventListener('click', () => {
     soundOn = !soundOn;
     localStorage.setItem('sb_sound', soundOn ? 'on' : 'off');
     soundBtn.classList.toggle('active', soundOn);
     playPing();
+  });
+}
+
+// Twinkle Toggle
+if (twinkleBtn) {
+  twinkleBtn.addEventListener('click', () => {
+    twinkleOn = !twinkleOn;
+    localStorage.setItem('sb_twinkle', twinkleOn ? 'on' : 'off');
+    twinkleBtn.classList.toggle('active', twinkleOn);
+    playTwinkle();
   });
 }
 
@@ -486,9 +520,7 @@ if (themeToggle) {
 // Copy
 document.getElementById('copy').addEventListener('click', () => {
   playPing();
-  navigator.clipboard.writeText(currentInput).then(() => {
-    // Optionally show a "Copied!" message
-  }).catch(() => {});
+  navigator.clipboard.writeText(currentInput).then(() => {}).catch(() => {});
 });
 
 // Paste
@@ -496,7 +528,6 @@ document.getElementById('paste').addEventListener('click', () => {
   playPing();
   navigator.clipboard.readText().then(text => {
     const cleanText = text.trim();
-    // Simple check to ensure pasted content is calculation-safe
     if (/^[0-9+\-*/%÷×.−]+$/.test(cleanText) && cleanText.length > 0) {
       currentInput = cleanText;
       update();
@@ -507,11 +538,9 @@ document.getElementById('paste').addEventListener('click', () => {
 // Clear Storage button
 document.getElementById('clear-storage').addEventListener('click', resetCalc);
 
-// Keyboard Support (Bonus Feature)
+// Keyboard Support
 document.addEventListener('keydown', e => {
     let key = e.key;
-
-    // Map keyboard keys to calculator values
     const keyMap = {
         'Enter': '=',
         'Backspace': 'backspace',
@@ -522,7 +551,6 @@ document.addEventListener('keydown', e => {
         'C': 'C',
     };
     
-    // Check if the key is a number, operator, or special mapped key
     let mappedValue = keyMap[key] || key;
     
     if (/[0-9]/.test(mappedValue) || ['.', '+', '%'].includes(mappedValue)) {
