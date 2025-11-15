@@ -13,129 +13,183 @@
       --error: #e74c3c;
       --sound-on: #3498db;
       --sound-off: #95a5a6;
+      --bg: #ffffff;
+      --muted: #7a6a5f;
+      --glass: rgba(255,255,255,0.6);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+    [data-theme="dark"] {
+      --biscuit: #3e2e28;
+      --biscuit-dark: #35221a;
+      --choco-chip: #f6e9da;
+      --warm-cream: #1b1a1a;
+      --bg: #0f0f10;
+      --muted: #bdb3a7;
+      --glass: rgba(0,0,0,0.4);
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial; }
+    html,body { height:100%; }
     body {
-      background: var(--warm-cream);
+      background: linear-gradient(180deg,var(--warm-cream),var(--bg));
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      transition: background .3s ease;
     }
 
+    /* Splash */
+    .splash {
+      position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--bg); z-index:9999; transition:opacity .45s ease, visibility .45s ease; 
+    }
+    .splash.hidden { opacity:0; visibility:hidden; }
+    .splash .logo-wrap { text-align:center; }
+    .splash svg { width:120px; height:120px; transform:scale(0.9); animation:pop .8s ease; }
+    .splash p { margin-top:12px; color:var(--muted); font-weight:600; }
+
+    @keyframes pop { 0% { transform: scale(.7) rotate(-6deg); opacity:0 } 60% { transform: scale(1.03); opacity:1 } 100% { transform: scale(1); } }
+
     .calculator {
-      background: white;
+      background: linear-gradient(180deg, var(--glass), rgba(255,255,255,0.02));
+      backdrop-filter: blur(6px);
       border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.18);
       width: 100%;
-      max-width: 360px;
+      max-width: 420px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transform: translateY(10px);
+      animation: fadeInUp .5s ease both;
     }
+    @keyframes fadeInUp { from { opacity:0; transform: translateY(18px);} to { opacity:1; transform: translateY(0);} }
+
+    .header {
+      display:flex; align-items:center; gap:12px; padding:14px 18px; background:transparent;
+    }
+    .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--choco-chip); }
+    .cookie { width:56px; height:56px; border-radius:50%; background: radial-gradient(circle at 30% 30%, #ffdca8, #f2b57b); box-shadow: inset -6px -6px 18px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; }
+    .cookie svg { width:34px; height:34px; }
+    .brand h1 { font-size:1rem; margin:0; line-height:1; }
+    .brand p { font-size:0.72rem; color:var(--muted); margin:0; }
 
     .display {
-      background: var(--biscuit);
+      background: linear-gradient(90deg, var(--biscuit), var(--biscuit-dark));
       color: var(--choco-chip);
-      padding: 24px 20px;
+      padding: 20px;
       text-align: right;
       font-size: 2rem;
-      font-weight: 500;
-      min-height: 80px;
+      font-weight: 700;
+      min-height: 84px;
       word-wrap: break-word;
       white-space: pre-wrap;
+      display:flex; align-items:center; justify-content:flex-end; gap:8px;
     }
+
+    .subrow { display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--muted); }
 
     .buttons {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      padding: 20px;
+      padding: 18px;
     }
 
     button {
       border: none;
-      padding: 16px 8px;
-      font-size: 1.2rem;
+      padding: 14px 8px;
+      font-size: 1.15rem;
       border-radius: 12px;
       cursor: pointer;
       background: var(--biscuit);
       color: var(--choco-chip);
-      font-weight: 600;
-      transition: all 0.2s ease;
+      font-weight: 700;
+      transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
     }
+    button:active { transform: translateY(2px) scale(.99); }
+    button:hover { transform: translateY(-4px); box-shadow: 0 12px 18px rgba(0,0,0,0.08); }
 
-    button:hover {
-      background: var(--biscuit-dark);
-      transform: translateY(-2px);
-    }
+    .operator { background: linear-gradient(180deg,#d7b89a,#c69c80); }
+    .equals { background: linear-gradient(180deg,#b8866b,#a86b4f); color: white; box-shadow: 0 10px 18px rgba(168,107,79,0.28); }
+    .clear  { background: linear-gradient(180deg,var(--error),#c0392b); color: white; }
+    .reset  { background: linear-gradient(180deg,#8e44ad,#6f2e96); color:white; grid-column: span 4; }
 
-    button:active {
-      transform: scale(0.96);
-    }
+    /* history / utilities row */
+    .util-row { display:flex; gap:8px; padding: 0 18px 12px; align-items:center; }
+    .util-row button, .util-row .small { padding:8px 10px; font-size:0.9rem; border-radius:10px; }
+    .small { background:transparent; border:1px solid rgba(0,0,0,0.04); color:var(--muted); }
 
-    .operator { background: #d7b89a; }
-    .equals { background: #b8866b; color: white; }
-    .clear  { background: var(--error); color: white; }
-
-    /* ---------- NEW FOOTER STYLE ---------- */
     .footer {
-      background: var(--biscuit);
-      padding: 12px;
-      font-size: 0.85rem;
+      background: transparent;
+      padding: 12px 18px 18px;
+      font-size: 0.9rem;
       color: var(--choco-chip);
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 8px;
       align-items: center;
+      justify-content: space-between;
+    }
+    .footer .left { display:flex; gap:10px; align-items:center; }
+    .footer a { color: var(--choco-chip); font-weight:700; text-decoration:none; }
+    .donate-btn { background: var(--choco-chip); color: white; padding: 8px 14px; border-radius: 10px; font-size: 0.9rem; text-decoration: none; }
+
+    .history-panel { max-height:160px; overflow:auto; padding:8px 18px 18px; display:none; gap:8px; flex-direction:column; }
+    .history-panel.show { display:flex; }
+    .history-item { padding:8px 10px; border-radius:8px; background:rgba(0,0,0,0.03); color:var(--muted); font-weight:600; display:flex; justify-content:space-between; }
+
+    /* responsive tweaks */
+    @media (max-width:420px) {
+      .calculator { max-width:360px; }
+      .display { font-size:1.6rem; padding:16px; }
+      button { padding:14px; font-size:1.05rem; }
+      .cookie { width:46px; height:46px; }
     }
 
-    .footer a {
-      color: var(--choco-chip);
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .footer .donate-btn {
-      background: var(--choco-chip);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: 0.2s;
-    }
-
-    .footer .donate-btn:hover {
-      background: #3e2e28;
-    }
-
-    #sound-toggle {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: var(--sound-off);
-      padding: 4px 8px;
-      border-radius: 6px;
-    }
-
-    #sound-toggle.active {
-      color: var(--sound-on);
-    }
   </style>
 </head>
-<body>
-  <div class="calculator">
+<body data-theme="light">
+
+  <!-- SPLASH -->
+  <div class="splash" id="splash">
+    <div class="logo-wrap">
+      <div class="cookie">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#f6c27b"/><circle cx="8.5" cy="9" r="1.2" fill="#8a5a3a"/><circle cx="13" cy="14" r="1.4" fill="#8a5a3a"/><circle cx="15.5" cy="10.5" r="0.9" fill="#8a5a3a"/></svg>
+      </div>
+      <p>SweetBiscuit44 — Loading…</p>
+    </div>
+  </div>
+
+  <div class="calculator" id="app">
+
+    <div class="header">
+      <a class="brand" href="https://sweetbiscuit44-del.github.io/sweet-biscuit44-home-page/" target="_blank">
+        <div class="cookie" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#f6c27b"/><circle cx="8.5" cy="9" r="1.2" fill="#8a5a3a"/><circle cx="13" cy="14" r="1.4" fill="#8a5a3a"/><circle cx="15.5" cy="10.5" r="0.9" fill="#8a5a3a"/></svg>
+        </div>
+        <div>
+          <h1>SweetBiscuit44 Calculator</h1>
+          <p>cozy cookie-themed math</p>
+        </div>
+      </a>
+      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+        <button id="theme-toggle" class="small">🌙</button>
+        <button id="history-toggle" class="small">📜</button>
+      </div>
+    </div>
+
     <div class="display" id="display">0</div>
+
+    <div class="util-row">
+      <button id="copy-btn" class="small">Copy</button>
+      <button id="paste-btn" class="small">Paste</button>
+      <button id="clear-storage" class="small">Clear Storage</button>
+      <div style="flex:1"></div>
+      <div class="subrow">Saved: <span id="saved-indicator">—</span></div>
+    </div>
 
     <div class="buttons" id="button-grid">
       <button class="clear">C</button>
@@ -161,148 +215,128 @@
       <button style="grid-column: span 2;">0</button>
       <button>.</button>
       <button class="operator">%</button>
+
+      <button class="reset">Reset Calculator</button>
     </div>
 
-    <!-- ---------- NEW FOOTER WITH DONATION + EMAIL ---------- -->
+    <div class="history-panel" id="history-panel"></div>
+
     <div class="footer">
-      <a
-        class="donate-btn"
-        href="https://paypal.me/sweetbiscuit44"
-        target="_blank"
-      >💛 Donate on PayPal</a>
-
-      <a href="mailto:sweetbiscuit44@gmail.com">
-        📧 sweetbiscuit44@gmail.com
-      </a>
-
-      <button id="sound-toggle">🎵</button>
+      <div class="left">
+        <a class="donate-btn" href="https://paypal.me/sweetbiscuit44" target="_blank">💛 Donate</a>
+        <a href="mailto:sweetbiscuit44@gmail.com">📧 Email</a>
+        <a href="https://sweetbiscuit44-del.github.io/sweet-biscuit44-home-page/" target="_blank">🍪 SweetBiscuit Main</a>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button id="sound-toggle">🎵</button>
+      </div>
     </div>
+
   </div>
 
   <script>
-    let display = document.getElementById('display');
-    let currentInput = '0';
-    let soundEnabled = true;
+    // ---- state and persistence ----
+    const STORAGE_KEY = 'sb_calc_state_v2';
+    let state = {
+      input: '0',
+      history: [],
+      sound: true,
+      theme: 'light'
+    };
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(raw){ Object.assign(state, JSON.parse(raw)); }
+      }catch(e){ console.warn('loadState failed',e); }
+    }
+    function saveState(){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); document.getElementById('saved-indicator').textContent = new Date().toLocaleTimeString(); }catch(e){}
+    }
+
+    loadState();
+
+    // ---- DOM refs ----
+    const display = document.getElementById('display');
+    const btnGrid = document.getElementById('button-grid');
+    const historyPanel = document.getElementById('history-panel');
+    const splash = document.getElementById('splash');
+
+    // ---- audio ----
     let audioCtx = null;
     let isAudioUnlocked = false;
-
-    function initAudio() {
-      if (isAudioUnlocked || !soundEnabled) return;
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-        isAudioUnlocked = true;
-      } catch (e) {}
+    function initAudio(){
+      if(isAudioUnlocked || !state.sound) return;
+      try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); isAudioUnlocked=true; }catch(e){}
     }
+    function playTick(){ if(!state.sound || !isAudioUnlocked || !audioCtx) return; const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination); o.type='sine'; o.frequency.value=680; g.gain.value=0.03; o.start(); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.08); o.stop(audioCtx.currentTime+0.09); }
 
-    function playTick() {
-      if (!soundEnabled || !isAudioUnlocked || !audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.type = 'sine';
-      osc.frequency.value = 800;
-      gain.gain.value = 0.05;
-      osc.start();
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-      osc.stop(audioCtx.currentTime + 0.1);
-    }
-
-    function ensureAudioAndPlay() {
-      initAudio();
-      playTick();
-    }
-
-    function updateDisplay() {
-      display.textContent =
-        currentInput.length > 15
-          ? currentInput.substring(0, 15) + '…'
-          : currentInput;
-    }
-
-    function appendToDisplay(value) {
-      ensureAudioAndPlay();
-      if (value === '⌫') {
-        currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : '0';
-      } else if (currentInput === '0' && value !== '.') {
-        currentInput = value;
-      } else {
-        const last = currentInput.slice(-1);
-        const ops = ['+', '-', '*', '/', '%'];
-        if (ops.includes(value) && ops.includes(last)) {
-          currentInput = currentInput.slice(0, -1) + value;
-        } else {
-          currentInput += value;
-        }
-      }
-      updateDisplay();
-    }
-
-    function clearDisplay() {
-      ensureAudioAndPlay();
-      currentInput = '0';
-      updateDisplay();
-    }
-
-    function calculate() {
-      ensureAudioAndPlay();
-      try {
-        let expr = currentInput
-          .replace(/×/g, '*')
-          .replace(/÷/g, '/')
-          .replace(/−/g, '-');
-        let result = Function('"use strict"; return (' + expr + ')')();
-        currentInput = String(result);
-        updateDisplay();
-      } catch {
-        currentInput = 'Error';
-        updateDisplay();
-        setTimeout(clearDisplay, 1500);
-      }
-    }
-
-    document.getElementById('button-grid').addEventListener('click', (e) => {
-      if (e.target.tagName !== 'BUTTON') return;
-      const text = e.target.textContent;
-      if (text === 'C') clearDisplay();
-      else if (text === '⌫') appendToDisplay('⌫');
-      else if (text === '=') calculate();
-      else if (text === '÷') appendToDisplay('/');
-      else if (text === '×') appendToDisplay('*');
-      else if (text === '−') appendToDisplay('-');
-      else if (text === '%') appendToDisplay('%');
-      else appendToDisplay(text);
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') calculate();
-      else if (e.key === 'Escape') clearDisplay();
-      else if (e.key === 'Backspace') { e.preventDefault(); appendToDisplay('⌫'); }
-      else if (/^[0-9]$/.test(e.key)) appendToDisplay(e.key);
-      else if (e.key === '.') appendToDisplay('.');
-      else if (['+', '-', '*', '/', '%'].includes(e.key))
-        appendToDisplay(e.key);
-    });
-
-    const soundToggle = document.getElementById('sound-toggle');
-
-    function loadSoundPref() {
-      const saved = localStorage.getItem('calculatorSound');
-      soundEnabled = saved !== 'false';
-      soundToggle.classList.toggle('active', soundEnabled);
-    }
-
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      localStorage.setItem('calculatorSound', soundEnabled);
-      soundToggle.classList.toggle('active', soundEnabled);
-    }
-
-    soundToggle.addEventListener('click', toggleSound);
-
-    loadSoundPref();
+    // ---- init UI from state ----
+    let currentInput = state.input || '0';
+    let theme = state.theme || 'light';
+    document.body.setAttribute('data-theme', theme);
     updateDisplay();
+
+    // show splash then hide
+    window.addEventListener('load', ()=>{
+      setTimeout(()=>{ splash.classList.add('hidden'); }, 700);
+    });
+
+    // ---- display logic ----
+    function updateDisplay(){
+      display.textContent = currentInput.length > 18 ? currentInput.substring(0,18)+'…' : currentInput;
+      state.input = currentInput; saveState(); renderHistory();
+    }
+
+    function appendToDisplay(value){ initAudio(); playTick();
+      if(value === '⌫'){ currentInput = currentInput.length>1 ? currentInput.slice(0,-1) : '0'; }
+      else if(currentInput==='0' && value !== '.') currentInput = value;
+      else{ const last = currentInput.slice(-1); const ops=['+','-','*','/','%']; if(ops.includes(value) && ops.includes(last)){ currentInput = currentInput.slice(0,-1) + value; } else { currentInput += value; } }
+      updateDisplay();
+    }
+
+    function clearDisplay(){ initAudio(); playTick(); currentInput='0'; updateDisplay(); }
+
+    function resetCalculator(){ localStorage.removeItem(STORAGE_KEY); state = { input:'0', history:[], sound: state.sound, theme: state.theme }; currentInput='0'; saveState(); updateDisplay(); }
+
+    function calculate(){ initAudio(); playTick(); try{ let expr = currentInput.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-'); let result = Function('"use strict"; return ('+expr+')')(); state.history.unshift({ in: currentInput, out: String(result), at: Date.now() }); if(state.history.length>50) state.history.pop(); currentInput = String(result); updateDisplay(); }catch(e){ currentInput='Error'; updateDisplay(); setTimeout(clearDisplay,1500); } }
+
+    // ---- history UI ----
+    function renderHistory(){ historyPanel.innerHTML = ''; if(!state.history || state.history.length===0) return; historyPanel.classList.add('show'); state.history.forEach((h,i)=>{ const div=document.createElement('div'); div.className='history-item'; div.innerHTML = `<div>${h.in} = ${h.out}</div><div><button data-index="${i}" class="small">Use</button></div>`; historyPanel.appendChild(div); }); }
+
+    // use history item
+    historyPanel.addEventListener('click', e => { if(e.target.tagName==='BUTTON'){ const idx = Number(e.target.dataset.index); const item = state.history[idx]; if(item){ currentInput = item.out; updateDisplay(); } } });
+
+    // ---- events ----
+    btnGrid.addEventListener('click', e => { if(e.target.tagName!=='BUTTON') return; const text = e.target.textContent; if(text==='C') clearDisplay(); else if(text==='Reset Calculator') resetCalculator(); else if(text==='⌫') appendToDisplay('⌫'); else if(text==='=') calculate(); else if(text==='÷') appendToDisplay('/'); else if(text==='×') appendToDisplay('*'); else if(text==='−') appendToDisplay('-'); else appendToDisplay(text); });
+
+    document.addEventListener('keydown', e => { if(e.key==='Enter') calculate(); else if(e.key==='Escape') clearDisplay(); else if(e.key==='Backspace'){ e.preventDefault(); appendToDisplay('⌫'); } else if(/^[0-9]$/.test(e.key)) appendToDisplay(e.key); else if(e.key==='.') appendToDisplay('.'); else if(['+','-','*','/','%'].includes(e.key)) appendToDisplay(e.key); });
+
+    // copy / paste
+    document.getElementById('copy-btn').addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(currentInput); alert('Copied: '+currentInput); }catch(e){ alert('Copy failed'); } });
+    document.getElementById('paste-btn').addEventListener('click', async ()=>{ try{ const txt = await navigator.clipboard.readText(); if(txt) { currentInput = txt; updateDisplay(); } }catch(e){ alert('Paste failed'); } });
+
+    document.getElementById('clear-storage').addEventListener('click', ()=>{ if(confirm('Clear saved calculator data (history & input)?')){ localStorage.removeItem(STORAGE_KEY); state.history=[]; currentInput='0'; saveState(); updateDisplay(); } });
+
+    // theme toggle
+    document.getElementById('theme-toggle').addEventListener('click', ()=>{ state.theme = state.theme==='dark'?'light':'dark'; document.body.setAttribute('data-theme', state.theme); saveState(); });
+
+    // history toggle
+    document.getElementById('history-toggle').addEventListener('click', ()=>{ historyPanel.classList.toggle('show'); });
+
+    // sound toggle
+    const soundBtn = document.getElementById('sound-toggle');
+    function loadSound(){ state.sound = state.sound !== false; soundBtn.classList.toggle('active', state.sound); }
+    function toggleSound(){ state.sound = !state.sound; soundBtn.classList.toggle('active', state.sound); saveState(); }
+    soundBtn.addEventListener('click', ()=>{ toggleSound(); initAudio(); });
+    loadSound();
+
+    // restore history on load
+    renderHistory();
+
+    // set currentInput from state
+    currentInput = state.input || '0'; updateDisplay();
+
   </script>
 </body>
 </html>
